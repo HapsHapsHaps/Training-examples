@@ -12,7 +12,7 @@ The first is the folder that you attach to you docker container, for which every
 Docker attached folder for me is: `/home/jacob/andet/training/docker-training-shared`  
 
 And inside this folder i created the folder, that will be the working directory for this tutorial.  
-It's called: `flower`  
+The working directory here is called: `flower`  
 
 Inside the docker container, the `flower` folder will reside at `$HOME/sharedfolder/flower`
 
@@ -38,7 +38,7 @@ The `--rm` part of the command means it will be deleted the moment you exit the 
 
 The `:Z` part of the command, is to stop selinux on the host machine from blocking every single interraction with the attached folder from inside the container.  
 
-With the docker container running, ad your terminal attached to it. It's time to train with the dataset.
+With the docker container running, and your terminal attached to it. It's time to train with the dataset.
 
 ## Training with the dataset
 
