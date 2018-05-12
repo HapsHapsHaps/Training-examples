@@ -7,9 +7,9 @@ https://www.tensorflow.org/tutorials/image_retraining
 
 ## Setup
 
-### This tutorial uses two paths you need two adapt to your use case
+### This tutorial uses two paths you need to adapt to your use case
 The first is the folder that you attach to you docker container, for which everything that needs to be kept will reside within.  
-Docker attached folder for me is: `/home/jacob/andet/training/docker-training-shared`  
+Docker attached folder for me is: `$HOME/andet/training/docker-training-shared`  
 
 And inside this folder i created the folder, that will be the working directory for this tutorial.  
 The working directory here is called: `flower`  
@@ -32,7 +32,7 @@ This should give you a folder called `flower_photos`, with five different folder
 ### Start docker container
 This will start the cotnainer and attach your terminal to the container, so every command will be executed inside  of it.  
 
-| `sudo docker run --rm -it -p 8001:8888 -v /home/jacob/andet/training/docker-training-shared:/root/sharedfolder:Z tensorflow/tensorflow:latest-devel`  
+| `sudo docker run --rm -it -p 8001:8888 -v $HOME/andet/training/docker-training-shared:/root/sharedfolder:Z tensorflow/tensorflow:latest-devel`  
 
 The `--rm` part of the command means it will be deleted the moment you exit the container. Makes it easier for rapid testing, as it will just create a new container the next time you run the command.  
 
