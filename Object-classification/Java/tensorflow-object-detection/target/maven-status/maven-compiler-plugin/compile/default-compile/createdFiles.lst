@@ -1,0 +1,9 @@
+Main.class
+org/tensorflow/demo/contrib/TensorFlowInferenceInterface.class
+org/tensorflow/demo/contrib/RunStats.class
+org/tensorflow/demo/Classifier$Recognition.class
+org/tensorflow/demo/Classifier.class
+org/tensorflow/demo/RectFloats.class
+org/tensorflow/demo/TensorFlowObjectDetectionAPIModel$1.class
+org/tensorflow/demo/TensorFlowObjectDetectionAPIModel.class
+org/tensorflow/demo/contrib/TensorFlowInferenceInterface$TensorId.class
