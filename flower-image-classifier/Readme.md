@@ -23,16 +23,16 @@ First make sure you've created and is inside the working folder, that will be at
 
 Then execute the following command, to download the data set.  
 
-| `curl -LO http://download.tensorflow.org/example_images/flower_photos.tgz`
+`curl -LO http://download.tensorflow.org/example_images/flower_photos.tgz`
 
 #### Step 2. Unpack trainng images
-| `tar xzf flower_photos.tgz`  
+`tar xzf flower_photos.tgz`  
 This should give you a folder called `flower_photos`, with five different folders inside, each with a bunch of images of said flower.
 
 ### Start docker container
 This will start the cotnainer and attach your terminal to the container, so every command will be executed inside  of it.  
 
-| `sudo docker run --rm -it -p 8001:8888 -v $HOME/andet/training/docker-training-shared:/root/sharedfolder:Z tensorflow/tensorflow:latest-devel`  
+`sudo docker run --rm -it -p 8001:8888 -v $HOME/andet/training/docker-training-shared:/root/sharedfolder:Z tensorflow/tensorflow:latest-devel`  
 
 The `--rm` part of the command means it will be deleted the moment you exit the container. Makes it easier for rapid testing, as it will just create a new container the next time you run the command.  
 
@@ -44,19 +44,19 @@ With the docker container running, and your terminal attached to it. It's time t
 
 ### Step 1. The actual training
 To train with the dataset you run the following command inside the container, which easily can take 30 minutes to complete.  
-| `python /tensorflow/tensorflow/examples/image_retraining/retrain.py --image_dir ~/sharedfolder/flower/flower_photos`  
+`python /tensorflow/tensorflow/examples/image_retraining/retrain.py --image_dir ~/sharedfolder/flower/flower_photos`  
 
 ### Step 2. Copying the trained results
 Now to make it easier for the rest of this tutorial, and to keep the trained data saved. We will copy them from the temp directory the reside in, into the attached folder.  
 This way you can restart the container without having to do the training again.
 
-| `cp /tmp/output_graph.pb ~/sharedfolder/flower/`  
-| `cp /tmp/output_labels.txt ~/sharedfolder/flower/`  
+`cp /tmp/output_graph.pb ~/sharedfolder/flower/`  
+`cp /tmp/output_labels.txt ~/sharedfolder/flower/`  
 
 ## The final piece. Classifying an image
 If everything until now has worked. It should be as simple as just running the following command..
 
-| `python /tensorflow/tensorflow/examples/label_image/label_image.py --graph=$HOME/sharedfolder/flower/output_graph.pb --labels=$HOME/sharedfolder/flower/output_labels.txt --input_layer=Mul --output_layer=final_result --image="$HOME/sharedfolder/flower/flower_photos/daisy/21652746_cc379e0eea_m.jpg"`  
+`python /tensorflow/tensorflow/examples/label_image/label_image.py --graph=$HOME/sharedfolder/flower/output_graph.pb --labels=$HOME/sharedfolder/flower/output_labels.txt --input_layer=Mul --output_layer=final_result --image="$HOME/sharedfolder/flower/flower_photos/daisy/21652746_cc379e0eea_m.jpg"`  
 
 This will give you the classifications for each trained flower type. 0.99 means it's 99 percent certain, that the image contains that specific flower.
 
