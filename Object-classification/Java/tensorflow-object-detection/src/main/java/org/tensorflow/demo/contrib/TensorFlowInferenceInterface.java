@@ -530,23 +530,23 @@ public class TensorFlowInferenceInterface {
     }
 
     private void prepareNativeRuntime() {
-        log.info(TAG, "Checking to see if TensorFlow native methods are already loaded");
-        try {
-            // Hack to see if the native libraries have been loaded.
-            new RunStats();
-            log.info(TAG, "TensorFlow native methods already loaded");
-        } catch (UnsatisfiedLinkError e1) {
-            log.info(
-                    TAG, "TensorFlow native methods not found, attempting to load via tensorflow_inference");
-            try {
-                System.loadLibrary("tensorflow_inference");
-                log.info(TAG, "Successfully loaded TensorFlow native methods (RunStats error may be ignored)");
-            } catch (UnsatisfiedLinkError e2) {
-                throw new RuntimeException(
-                        "Native TF methods not found; check that the correct native"
-                                + " libraries are present in the APK.");
-            }
-        }
+//        log.info(TAG, "Checking to see if TensorFlow native methods are already loaded");
+//        try {
+//            // Hack to see if the native libraries have been loaded.
+//            new RunStats();
+//            log.info(TAG, "TensorFlow native methods already loaded");
+//        } catch (UnsatisfiedLinkError e1) {
+//            log.info(
+//                    TAG, "TensorFlow native methods not found, attempting to load via tensorflow_inference");
+//            try {
+//                System.loadLibrary("tensorflow_inference");
+//                log.info(TAG, "Successfully loaded TensorFlow native methods (RunStats error may be ignored)");
+//            } catch (UnsatisfiedLinkError e2) {
+//                throw new RuntimeException(
+//                        "Native TF methods not found; check that the correct native"
+//                                + " libraries are present in the APK.");
+//            }
+//        }
     }
 
     private void loadGraph(byte[] graphDef, Graph g) throws IOException {

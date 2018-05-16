@@ -172,7 +172,7 @@ public class TensorFlowObjectDetectionAPIModel implements Classifier {
 //        Trace.endSection();
 
         // Find the best detections.
-        final PriorityQueue<Recognition> pq =
+        final PriorityQueue<Recognition> priorityQueue =
                 new PriorityQueue<Recognition>(
                         1,
                         new Comparator<Recognition>() {
@@ -191,13 +191,13 @@ public class TensorFlowObjectDetectionAPIModel implements Classifier {
                             outputLocations[4 * i] * inputSize,
                             outputLocations[4 * i + 3] * inputSize,
                             outputLocations[4 * i + 2] * inputSize);
-            pq.add(
+            priorityQueue.add(
                     new Recognition("" + i, labels.get((int) outputClasses[i]), outputScores[i], detection));
         }
 
         final ArrayList<Recognition> recognitions = new ArrayList<Recognition>();
-        for (int i = 0; i < Math.min(pq.size(), MAX_RESULTS); ++i) {
-            recognitions.add(pq.poll());
+        for (int i = 0; i < Math.min(priorityQueue.size(), MAX_RESULTS); ++i) {
+            recognitions.add(priorityQueue.poll());
         }
 //        Trace.endSection(); // "recognizeImage"
         return recognitions;
