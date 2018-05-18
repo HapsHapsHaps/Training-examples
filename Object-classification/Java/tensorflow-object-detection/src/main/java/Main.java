@@ -37,9 +37,9 @@ public class Main {
         int inputSize = 200;
 
 
-//        newRun(imageFile, resultImageFile, modelFile, labelFile, inputSize);
+        newRun(imageFile, resultImageFile, modelFile, labelFile, inputSize);
 
-        oldRun(imageFile, resultImageFile, modelFile, labelFile, inputSize);
+//        oldRun(imageFile, resultImageFile, modelFile, labelFile, inputSize);
 
 
     }
@@ -51,7 +51,7 @@ public class Main {
         CustomObjectDetector objectDetector = new CustomObjectDetector();
         objectDetector.addGraph(modelFile);
 
-        objectDetector.classifyImage(image);
+        objectDetector.classifyImage(image, inputSize);
 
 
 //        int x = (int) location.getLeft();

@@ -34,8 +34,12 @@ public class CustomClassifier implements AutoCloseable {
     }
 
     public void feedImage(Tensor<Float> tensorImage) {
-        runner.feed(IMAGE_FEED_NAME, tensorImage);
-        inputTensors.add(tensorImage);
+        feed(IMAGE_FEED_NAME, tensorImage);
+    }
+
+    public void feed(String operationName, Tensor<?> tensor) {
+        runner.feed(operationName, tensor);
+        inputTensors.add(tensor);
     }
 
     public void run() {
