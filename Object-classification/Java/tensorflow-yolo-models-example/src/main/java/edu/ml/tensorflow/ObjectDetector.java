@@ -8,12 +8,10 @@ import edu.ml.tensorflow.util.ImageUtil;
 import edu.ml.tensorflow.util.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tensorflow.Graph;
-import org.tensorflow.Output;
-import org.tensorflow.Session;
-import org.tensorflow.Tensor;
+import org.tensorflow.*;
 
 import java.nio.FloatBuffer;
+import java.util.Iterator;
 import java.util.List;
 
 import static edu.ml.tensorflow.Config.GRAPH_FILE;
@@ -87,8 +85,14 @@ public class ObjectDetector {
     private float[] executeYOLOGraph(final Tensor<Float> image) {
         try (Graph graph = new Graph()) {
             graph.importGraphDef(GRAPH_DEF);
+
+            Iterator<Operation> operations = graph.operations();
+            System.out.println("Supported Operations");
+            while(operations.hasNext()) {
+                System.out.println(operations.next());
+            }
             try (Session s = new Session(graph);
-                Tensor<Float> result = s.runner().feed("input", image).fetch("output").run().get(0).expect(Float.class)) {
+                Tensor<Float> result = s.runner().feed("image_tensor", image).fetch("output").run().get(0).expect(Float.class)) {
                 float[] outputTensor = new float[YOLOClassifier.getInstance().getOutputSizeByShape(result)];
                 FloatBuffer floatBuffer = FloatBuffer.wrap(outputTensor);
                 result.writeTo(floatBuffer);

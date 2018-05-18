@@ -29,11 +29,15 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Vector;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tensorflow.Graph;
-import org.tensorflow.Operation;
+import org.tensorflow.*;
 import org.tensorflow.demo.contrib.TensorFlowInferenceInterface;
+import org.tensorflow.demo.custom.CustomObjectDetector;
+import org.tensorflow.types.UInt8;
+
+import javax.imageio.ImageIO;
 
 /**
  * Wrapper for frozen detection models trained using the Tensorflow Object Detection API:
@@ -44,6 +48,10 @@ public class TensorFlowObjectDetectionAPIModel implements Classifier {
 
     // Only return this many results.
     private static final int MAX_RESULTS = 100;
+    private static final int NUM_DETECTIONS = 2;
+    // Params used for image processing
+    int SIZE = 416;
+    float MEAN = 255f;
 
     // Config values.
     private String inputName;
@@ -85,6 +93,8 @@ public class TensorFlowObjectDetectionAPIModel implements Classifier {
         }
         reader.close();
 
+        log.debug("Classifier Labels: {}", d.labels.toString());
+
         InputStream modeFileInputStream = Files.newInputStream(modelFile.toPath());
 
         d.inferenceInterface = new TensorFlowInferenceInterface(modeFileInputStream);
@@ -124,7 +134,7 @@ public class TensorFlowObjectDetectionAPIModel implements Classifier {
         d.outputScores = new float[MAX_RESULTS];
         d.outputLocations = new float[MAX_RESULTS * 4];
         d.outputClasses = new float[MAX_RESULTS];
-        d.outputNumDetections = new float[1];
+        d.outputNumDetections = new float[NUM_DETECTIONS];
         return d;
     }
 
@@ -140,8 +150,17 @@ public class TensorFlowObjectDetectionAPIModel implements Classifier {
         // Preprocess the image data from 0-255 int to normalized float based
         // on the provided parameters.
 //        bitmap.getPixels(intValues, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-        bitmap.getRGB(0,0, bitmap.getWidth(), bitmap.getHeight(), intValues, 0, bitmap.getWidth());
+//
+//        ByteArrayOutputStream imageStream = new ByteArrayOutputStream();
+//        try {
+//            ImageIO.write(bitmap, "jpg", imageStream);
+//        } catch (IOException e) {
+//            throw new RuntimeException("Bad image conversion to byteArray.");
+//        }
+//        byteValues = image;
 
+        bitmap.getRGB(0,0, bitmap.getWidth(), bitmap.getHeight(), intValues, 0, bitmap.getWidth());
+//
         for (int i = 0; i < intValues.length; ++i) {
             byteValues[i * 3 + 2] = (byte) (intValues[i] & 0xFF);
             byteValues[i * 3 + 1] = (byte) ((intValues[i] >> 8) & 0xFF);
@@ -152,6 +171,7 @@ public class TensorFlowObjectDetectionAPIModel implements Classifier {
         // Copy the input data into TensorFlow.
 //        Trace.beginSection("feed");
         inferenceInterface.feed(inputName, byteValues, 1, inputSize, inputSize, 3);
+//        inferenceInterface.addFeed(inputName, imageTensor);
 //        Trace.endSection();
 
         // Run the inference call.

@@ -572,7 +572,7 @@ public class TensorFlowInferenceInterface {
                 "Model load took " + (endMs - startMs) + "ms, TensorFlow version: " + TensorFlow.version());
     }
 
-    private void addFeed(String inputName, Tensor<?> t) {
+    public void addFeed(String inputName, Tensor<?> t) {
         // The string format accepted by TensorFlowInferenceInterface is node_name[:output_index].
         TensorId tid = TensorId.parse(inputName);
         runner.feed(tid.name, tid.outputIndex, t);
