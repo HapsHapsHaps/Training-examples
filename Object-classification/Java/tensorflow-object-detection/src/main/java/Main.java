@@ -31,8 +31,8 @@ public class Main {
 //        File imageFile = new File("/home/jacob/andet/training/random-test-images/dog-small.jpg");
 //        File imageFile = new File("/home/jacob/andet/training/random-test-images/sub7.jpg");
 //        File imageFile = new File("/home/jacob/andet/training/random-test-images/nosub31.jpg");
-//        File imageFile = new File("/home/jacob/andet/training/random-test-images/sub-old-notrain-small.png");
-        File imageFile = new File("/home/jacob/andet/training/docker-training-shared/random-test-images/image-6.jpg");
+//        File imageFile = new File("/home/jacob/andet/training/docker-training-shared/random-test-images/toConvert/00011.jpg");
+        File imageFile = new File("/home/jacob/andet/training/docker-training-shared/random-test-images/image-8.jpg");
 
 //        File resultImageFile = new File("/home/jacob/andet/training/random-test-images/result.jpg");
         File resultImageFile = new File("/home/jacob/andet/training/docker-training-shared/random-test-images/result.jpg");
@@ -58,14 +58,21 @@ public class Main {
 
         Recognition firstRecognition = recognitions.get(0);
 
-        RectFloats location = firstRecognition.getLocation();
+        List<Box> boxes = new ArrayList<>();
 
-        int x = (int) location.getX();
-        int y = (int) location.getY();
-        int width = (int) location.getWidth() - x;
-        int height = (int) location.getHeight() - y;
+        for (Recognition recognition : recognitions) {
+            if(recognition.getConfidence() > 0.05f) {
+                RectFloats location = recognition.getLocation();
+                int x = (int) location.getX();
+                int y = (int) location.getY();
+                int width = (int) location.getWidth() - x;
+                int height = (int) location.getHeight() - y;
 
-        BufferedImage boxedImage = drawBox(image, x, y, width, height);
+                boxes.add(new Box(x, y, width, height));
+            }
+        }
+
+        BufferedImage boxedImage = drawBoxes(image, boxes);
 
         ImageIO.write(boxedImage, "jpg", resultImageFile);
 
@@ -99,6 +106,18 @@ public class Main {
         String s = "";
     }
 
+    private static BufferedImage drawBoxes(BufferedImage image, List<Box> boxes) {
+        Graphics2D graph = image.createGraphics();
+        graph.setColor(Color.BLACK);
+
+        for (Box box : boxes) {
+            graph.drawRect(box.x, box.y, box.width, box.height);
+        }
+
+        graph.dispose();
+        return image;
+    }
+
     private static BufferedImage drawBox(BufferedImage image, int x, int y, int width, int height) {
         Graphics2D graph = image.createGraphics();
         graph.setColor(Color.BLACK);
@@ -107,5 +126,21 @@ public class Main {
 //        graph.setStroke();
         graph.dispose();
         return image;
+    }
+
+
+}
+
+class Box {
+    int x;
+    int y;
+    int width;
+    int height;
+
+    Box(int x, int y, int width, int height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
     }
 }
