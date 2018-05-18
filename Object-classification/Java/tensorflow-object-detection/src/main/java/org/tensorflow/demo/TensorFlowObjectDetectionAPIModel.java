@@ -185,10 +185,10 @@ public class TensorFlowObjectDetectionAPIModel implements Classifier {
         outputScores = new float[MAX_RESULTS];
         outputClasses = new float[MAX_RESULTS];
         outputNumDetections = new float[1];
-        inferenceInterface.fetch(outputNames[0], outputLocations);
-        inferenceInterface.fetch(outputNames[1], outputScores);
-        inferenceInterface.fetch(outputNames[2], outputClasses);
-        inferenceInterface.fetch(outputNames[3], outputNumDetections);
+        inferenceInterface.fetch(outputNames[0], outputLocations); //detection_boxes
+        inferenceInterface.fetch(outputNames[1], outputScores); //detection_scores
+        inferenceInterface.fetch(outputNames[2], outputClasses); //detection_classes
+        inferenceInterface.fetch(outputNames[3], outputNumDetections); //num_detections
 //        Trace.endSection();
 
         // Find the best detections.

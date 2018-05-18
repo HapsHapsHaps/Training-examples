@@ -29,7 +29,7 @@ public class Main {
 //        File imageFile = new File("/home/jacob/andet/training/random-test-images/sub7.jpg");
 //        File imageFile = new File("/home/jacob/andet/training/random-test-images/nosub31.jpg");
 //        File imageFile = new File("/home/jacob/andet/training/random-test-images/sub-old-notrain-small.png");
-        File imageFile = new File("/home/jacob/andet/training/docker-training-shared/random-test-images/image-5.jpg");
+        File imageFile = new File("/home/jacob/andet/training/docker-training-shared/random-test-images/image-8.jpg");
 
 //        File resultImageFile = new File("/home/jacob/andet/training/random-test-images/result.jpg");
         File resultImageFile = new File("/home/jacob/andet/training/docker-training-shared/random-test-images/result.jpg");
@@ -48,8 +48,8 @@ public class Main {
 
         BufferedImage image = ImageIO.read(imageFile);
 
-        CustomObjectDetector objectDetector = new CustomObjectDetector();
-        objectDetector.addGraph(modelFile);
+        CustomObjectDetector objectDetector = new CustomObjectDetector(modelFile, labelFile);
+//        objectDetector.addGraph(modelFile);
 
         objectDetector.classifyImage(image, inputSize);
 

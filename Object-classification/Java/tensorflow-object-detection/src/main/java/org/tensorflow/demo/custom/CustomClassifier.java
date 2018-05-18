@@ -11,9 +11,9 @@ import java.util.List;
 public class CustomClassifier implements AutoCloseable {
 
     String[] resultOperationNames = new String[] {"num_detections", "detection_boxes", "detection_scores",
-            "detection_classes", "detection_masks"};
+            "detection_classes"/*, "detection_masks"*/};
     private static final int MAX_RESULTS = 100;
-    private static final int NUM_DETECTIONS = 2;
+    private static final int NUM_DETECTIONS = 3;
     private static final String IMAGE_FEED_NAME = "image_tensor";
 
     private Session session;
@@ -76,10 +76,10 @@ public class CustomClassifier implements AutoCloseable {
         return detection_classes;
     }
 
-    public float[] get_detection_masks() {
+    /*public float[] get_detection_masks() {
         getTensorFloat("detection_masks", detection_masks);
         return detection_masks;
-    }
+    }*/
 
     private void getTensorFloat(String name, float[] output) {
         FloatBuffer buffer = FloatBuffer.wrap(output);
