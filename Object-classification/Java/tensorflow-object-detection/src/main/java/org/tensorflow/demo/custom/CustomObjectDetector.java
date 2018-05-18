@@ -74,6 +74,8 @@ public class CustomObjectDetector {
         Detection detection = executeGraph(imageTensor);
 
         return processDetections(detection, inputSize, width, height);
+//        test(detection);
+//        return null;
     }
 
 //    /**
@@ -155,18 +157,20 @@ public class CustomObjectDetector {
                 classifier.feed(INPUT_NAME, image);
                 classifier.run();
 
-                float[] num_detections = classifier.get_num_detections();
-                float[] detection_boxes = classifier.get_detection_boxes();
-                float[] detection_scores = classifier.get_detection_scores();
-                float[] detection_classes = classifier.get_detection_classes();
 
-                Detection detection = new Detection(num_detections, detection_boxes, detection_scores, detection_classes);
+//                float[] num_detections = classifier.get_num_detections();
+//                float[] detection_boxes = classifier.get_detection_boxes();
+//                float[] detection_scores = classifier.get_detection_scores();
+//                float[] detection_classes = classifier.get_detection_classes();
 
-                System.out.println(num_detections);
+//                Detection detection = new Detection(num_detections, detection_boxes, detection_scores, detection_classes);
+
+//                System.out.println(num_detections);
 
                 String s = "";
 
-                return detection;
+//                return detection;
+                return classifier.detections();
             }
         }
     }
@@ -219,6 +223,31 @@ public class CustomObjectDetector {
         String s = "hoho";
 
         return recognitions;
+//        return null;
+    }
+
+    private void test(Detection detection) {
+//        float[][] detection_boxes = detection.getDetection_boxes();
+//        float[] detection_scores = detection.getDetection_scores();
+//        float[] detection_classes = detection.getDetection_classes();
+//
+//        // All these tensors have:
+//        // - 1 as the first dimension
+//        // - maxObjects as the second dimension
+//        // While boxesT will have 4 as the third dimension (2 sets of (x, y) coordinates).
+//        // This can be verified by looking at scoresT.shape() etc.
+//        // Print all objects whose score is at least 0.5.
+//        boolean foundSomething = false;
+//        for (int i = 0; i < detection_scores.length; ++i) {
+//            if (detection_scores[i] < 0.5) {
+//                continue;
+//            }
+//            foundSomething = true;
+//            System.out.printf("\tFound %-20s (score: %.4f)\n", labels.get((int)detection_classes[i]), detection_scores[i]);
+//        }
+//        if (!foundSomething) {
+//            System.out.println("No objects detected with a high enough score.");
+//        }
     }
 
 //    private String[] fetchNames() {

@@ -81,6 +81,21 @@ public class CustomClassifier implements AutoCloseable {
         return detection_masks;
     }*/
 
+    public Detection detections() {
+        Tensor<Float> detection_boxes = (Tensor<Float>) getTensor("detection_boxes");
+        Tensor<Float> detection_scores = (Tensor<Float>) getTensor("detection_scores");
+        Tensor<Float> detection_classes = (Tensor<Float>) getTensor("detection_classes");
+
+        int maxObjects = (int) detection_scores.shape()[1];
+        float[] num_detections_floats = get_num_detections();
+//        float[][] detection_boxes_floats = detection_boxes.copyTo(new float[1][maxObjects][4])[0];
+        float[] detection_boxes_floats = get_detection_boxes();
+        float[] detection_scores_floats = detection_scores.copyTo(new float[1][maxObjects])[0];
+        float[] detection_classes_floats = detection_classes.copyTo(new float[1][maxObjects])[0];
+
+        return new Detection(num_detections_floats, detection_boxes_floats, detection_scores_floats, detection_classes_floats);
+    }
+
     private void getTensorFloat(String name, float[] output) {
         FloatBuffer buffer = FloatBuffer.wrap(output);
         getTensor(name).writeTo(buffer);
