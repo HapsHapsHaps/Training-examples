@@ -1,3 +1,4 @@
+import org.apache.commons.io.FileUtils;
 import org.tensorflow.demo.Classifier;
 import org.tensorflow.demo.Recognition;
 import org.tensorflow.demo.RectFloats;
@@ -8,7 +9,9 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -19,7 +22,7 @@ public class Main {
 
 
 //        File modelFile = new File("/home/jacob/andet/training/docker-training-shared/subTraining/training/output_inference_graph_custom.pb/frozen_inference_graph.pb");
-        File modelFile = new File("/home/jacob/andet/training/docker-training-shared/subTraining/trainingResults/frozen_inference_graph.pb");
+        File modelFile = new File("/home/jacob/andet/training/docker-training-shared/subTraining/trainingResults/frozen_inference_graph-01.pb");
         File labelFile = new File("/home/jacob/andet/training/docker-training-shared/subTraining/data/object-detection.pbtxt");
 
 //        File imageFile = new File("/home/jacob/andet/training/docker-training-shared/raccoon_dataset-master/images/raccoon-14.jpg");
@@ -29,7 +32,7 @@ public class Main {
 //        File imageFile = new File("/home/jacob/andet/training/random-test-images/sub7.jpg");
 //        File imageFile = new File("/home/jacob/andet/training/random-test-images/nosub31.jpg");
 //        File imageFile = new File("/home/jacob/andet/training/random-test-images/sub-old-notrain-small.png");
-        File imageFile = new File("/home/jacob/andet/training/docker-training-shared/random-test-images/image-8.jpg");
+        File imageFile = new File("/home/jacob/andet/training/docker-training-shared/random-test-images/image-6.jpg");
 
 //        File resultImageFile = new File("/home/jacob/andet/training/random-test-images/result.jpg");
         File resultImageFile = new File("/home/jacob/andet/training/docker-training-shared/random-test-images/result.jpg");
@@ -51,17 +54,20 @@ public class Main {
         CustomObjectDetector objectDetector = new CustomObjectDetector(modelFile, labelFile);
 //        objectDetector.addGraph(modelFile);
 
-        objectDetector.classifyImage(image, inputSize);
+        ArrayList<Recognition> recognitions = objectDetector.classifyImage(image, inputSize);
 
+        Recognition firstRecognition = recognitions.get(0);
 
-//        int x = (int) location.getLeft();
-//        int y = (int) location.getTop();
-//        int width = (int) location.getRight() - x;
-//        int height = (int) location.getBottom() - y;
-//
-//        BufferedImage boxedImage = drawBox(image, x, y, width, height);
-//
-//        ImageIO.write(boxedImage, "jpg", resultImageFile);
+        RectFloats location = firstRecognition.getLocation();
+
+        int x = (int) location.getX();
+        int y = (int) location.getY();
+        int width = (int) location.getWidth() - x;
+        int height = (int) location.getHeight() - y;
+
+        BufferedImage boxedImage = drawBox(image, x, y, width, height);
+
+        ImageIO.write(boxedImage, "jpg", resultImageFile);
 
         String s = "";
     }
@@ -71,6 +77,8 @@ public class Main {
 
         BufferedImage image = ImageIO.read(imageFile);
 
+//        FileInputStream imageStream = FileUtils.openInputStream(imageFile);
+
         Classifier classifier = TensorFlowObjectDetectionAPIModel.create(modelFile, labelFile, inputSize);
 
         List<Recognition> recognitions = classifier.recognizeImage(image);
@@ -79,10 +87,10 @@ public class Main {
 
         RectFloats location = firstRecognition.getLocation();
 
-        int x = (int) location.getLeft();
-        int y = (int) location.getTop();
-        int width = (int) location.getRight() - x;
-        int height = (int) location.getBottom() - y;
+        int x = (int) location.getX();
+        int y = (int) location.getY();
+        int width = (int) location.getWidth() - x;
+        int height = (int) location.getHeight() - y;
 
         BufferedImage boxedImage = drawBox(image, x, y, width, height);
 

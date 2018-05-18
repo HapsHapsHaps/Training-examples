@@ -29,13 +29,10 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Vector;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensorflow.*;
 import org.tensorflow.demo.contrib.TensorFlowInferenceInterface;
-import org.tensorflow.demo.custom.CustomObjectDetector;
-import org.tensorflow.types.UInt8;
 
 import javax.imageio.ImageIO;
 
@@ -83,15 +80,17 @@ public class TensorFlowObjectDetectionAPIModel implements Classifier {
             final int inputSize) throws IOException {
         final TensorFlowObjectDetectionAPIModel d = new TensorFlowObjectDetectionAPIModel();
 
-        InputStream labelsInput = Files.newInputStream(labelFile.toPath());
-        BufferedReader reader = null;
-        reader = new BufferedReader(new InputStreamReader(labelsInput));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            log.warn(line);
-            d.labels.add(line);
-        }
-        reader.close();
+//        InputStream labelsInput = Files.newInputStream(labelFile.toPath());
+//        BufferedReader reader = null;
+//        reader = new BufferedReader(new InputStreamReader(labelsInput));
+//        String line;
+//        while ((line = reader.readLine()) != null) {
+//            log.warn(line);
+//            d.labels.add(line);
+//        }
+//        reader.close();
+
+        d.labels = addLabels(labelFile);
 
         log.debug("Classifier Labels: {}", d.labels.toString());
 
@@ -138,6 +137,20 @@ public class TensorFlowObjectDetectionAPIModel implements Classifier {
         return d;
     }
 
+    private static Vector<String> addLabels(File labelFile) throws IOException {
+        Vector<String> labelResults = new Vector<>(2);
+        List<String> labels = Files.readAllLines(labelFile.toPath());
+
+        for (String label : labels) {
+            if(label.contains("name:")) {
+                int i = label.indexOf("'");
+                String substring = label.substring(i + 1, label.length() - 1);
+                labelResults.add(substring);
+            }
+        }
+        return labelResults;
+    }
+
     private TensorFlowObjectDetectionAPIModel() {}
 
     @Override
@@ -157,7 +170,7 @@ public class TensorFlowObjectDetectionAPIModel implements Classifier {
 //        } catch (IOException e) {
 //            throw new RuntimeException("Bad image conversion to byteArray.");
 //        }
-//        byteValues = image;
+//        byteValues = imageStream.toByteArray();
 
         bitmap.getRGB(0,0, bitmap.getWidth(), bitmap.getHeight(), intValues, 0, bitmap.getWidth());
 //
@@ -212,7 +225,7 @@ public class TensorFlowObjectDetectionAPIModel implements Classifier {
                             outputLocations[4 * i + 3] * inputSize,
                             outputLocations[4 * i + 2] * inputSize);
             priorityQueue.add(
-                    new Recognition("" + i, labels.get((int) outputClasses[i]), outputScores[i], detection));
+                    new Recognition("" + i, labels.get(((int) outputClasses[i]) - 1), outputScores[i], detection));
         }
 
         final ArrayList<Recognition> recognitions = new ArrayList<Recognition>();

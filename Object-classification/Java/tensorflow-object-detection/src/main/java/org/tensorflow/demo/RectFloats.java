@@ -1,35 +1,35 @@
 package org.tensorflow.demo;
 
 public class RectFloats {
-    private final float left, top, right, bottom;
+    private final float x, y, width, height;
 
     public RectFloats(RectFloats rectFloats) {
-        this.left = rectFloats.getLeft();
-        this.top = rectFloats.getTop();
-        this.right = rectFloats.getRight();
-        this. bottom = rectFloats.getBottom();
+        this.x = rectFloats.getX();
+        this.y = rectFloats.getY();
+        this.width = rectFloats.getWidth();
+        this.height = rectFloats.getHeight();
     }
 
-    public RectFloats(float left, float top, float right, float bottom) {
-        this.left = left;
-        this.top = top;
-        this.right = right;
-        this. bottom = bottom;
+    public RectFloats(float x, float y, float width, float height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
     }
 
-    public float getLeft() {
-        return left;
+    public float getX() {
+        return x;
     }
 
-    public float getTop() {
-        return top;
+    public float getY() {
+        return y;
     }
 
-    public float getRight() {
-        return right;
+    public float getWidth() {
+        return width;
     }
 
-    public float getBottom() {
-        return bottom;
+    public float getHeight() {
+        return height;
     }
 }

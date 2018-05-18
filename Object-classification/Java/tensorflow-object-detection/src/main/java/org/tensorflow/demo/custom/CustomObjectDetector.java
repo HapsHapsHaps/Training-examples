@@ -1,12 +1,13 @@
 package org.tensorflow.demo.custom;
 
 import org.tensorflow.*;
-import org.tensorflow.demo.GraphBuilder;
 import org.tensorflow.demo.Recognition;
 import org.tensorflow.demo.RectFloats;
 import org.tensorflow.types.UInt8;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -19,11 +20,8 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 public class CustomObjectDetector {
-
-//    private static final int SIZE = 200;
-    private static final float MEAN = 255f;
     private static final String INPUT_NAME = "image_tensor";
-    private static final int MAX_RESULTS = 100;
+    private static final int MAX_RESULTS = 24;
 
     private byte[] graphBytes;
     private List<String> labels;
@@ -61,20 +59,21 @@ public class CustomObjectDetector {
         }
     }
 
-    public void classifyImage(BufferedImage image, int inputSize) {
-//        ByteArrayOutputStream imageStream = new ByteArrayOutputStream();
-//        try {
-//            ImageIO.write(image, "jpg", imageStream);
-//        } catch (IOException e) {
-//            throw new RuntimeException("Bad image conversion to byteArray.");
-//        }
+    public ArrayList<Recognition> classifyImage(BufferedImage image, int inputSize) {
+
+        int width = image.getWidth();
+        int height = image.getHeight();
+//        width = 200;
+//        height = 200;
+
+
 
 //        Tensor<Float> imageTensor = normalizeImage(imageStream.toByteArray());
-        Tensor<UInt8> imageTensor = normalizeImage_UInt8(image, inputSize);
+        Tensor<UInt8> imageTensor = normalizeImage_UInt8(image, inputSize, width, height);
 
         Detection detection = executeGraph(imageTensor);
 
-        processDetections(detection, inputSize);
+        return processDetections(detection, inputSize, width, height);
     }
 
 //    /**
@@ -104,21 +103,44 @@ public class CustomObjectDetector {
 //        }
 //    }
 
-    public Tensor<UInt8> normalizeImage_UInt8(BufferedImage image, int inputSize) {
-        int[] imageInts = new int[inputSize * inputSize];
-        byte[] byteValues = new byte[inputSize * inputSize * 3];
+    public Tensor<UInt8> normalizeImage_UInt8(BufferedImage image, int inputSize, int width, int height) {
+        int[] imageInts = new int[width * height];
+        byte[] byteValues = new byte[width * height * 3];
 
-        image.getRGB(0,0, image.getWidth(), image.getHeight(), imageInts, 0, image.getWidth());
-//
-        for (int i = 0; i < imageInts.length; ++i) {
-            byteValues[i * 3 + 2] = (byte) (imageInts[i] & 0xFF);
-            byteValues[i * 3 + 1] = (byte) ((imageInts[i] >> 8) & 0xFF);
-            byteValues[i * 3 + 0] = (byte) ((imageInts[i] >> 16) & 0xFF);
+//        image.getRGB(0,0, image.getWidth(), image.getHeight(), imageInts, 0, image.getWidth());
+
+//        for (int i = 0; i < imageInts.length; ++i) {
+//            byteValues[i * 3 + 2] = (byte) (imageInts[i] & 0xFF);
+//            byteValues[i * 3 + 1] = (byte) ((imageInts[i] >> 8) & 0xFF);
+//            byteValues[i * 3 + 0] = (byte) ((imageInts[i] >> 16) & 0xFF);
+//        }
+
+        if (image.getType() != BufferedImage.TYPE_3BYTE_BGR) {
+            throw new RuntimeException("Expected 3-byte BGR encoding in BufferedImage, found " + image.getType() + ". This code could be made more robust");
         }
 
+        byte[] data = ((DataBufferByte) image.getData().getDataBuffer()).getData();
+        bgr2rgb(data);
+
 //        inputName, byteValues, 1, inputSize, inputSize, 3
-        long[] dims = new long[] {1, inputSize, inputSize, 3};
-        return Tensor.create(UInt8.class, dims, ByteBuffer.wrap(byteValues));
+//        long[] dims = new long[] {1, width, height, 3};
+        final long BATCH_SIZE = 1;
+        final long CHANNELS = 3;
+        long[] shape = new long[] {BATCH_SIZE, image.getHeight(), image.getWidth(), CHANNELS};
+        return Tensor.create(UInt8.class, shape, ByteBuffer.wrap(data));
+//        return Tensor.create(UInt8.class, dims, ByteBuffer.wrap(byteValues));
+    }
+
+    /**
+     * Converts image from the type BGR to RGB
+     * @param data
+     */
+    private static void bgr2rgb(byte[] data) {
+        for (int i = 0; i < data.length; i += 3) {
+            byte tmp = data[i];
+            data[i] = data[i + 2];
+            data[i + 2] = tmp;
+        }
     }
 
     /**
@@ -155,7 +177,7 @@ public class CustomObjectDetector {
         return graph;
     }
 
-    private void processDetections(Detection detection, int inputSize) {
+    private ArrayList<Recognition> processDetections(Detection detection, int inputSize, int width, int height) {
         // Find the best detections.
         final PriorityQueue<Recognition> priorityQueue =
                 new PriorityQueue<Recognition>(
@@ -181,10 +203,10 @@ public class CustomObjectDetector {
         for (int i = 0; i < detection_scores.length; ++i) {
             final RectFloats rectDetection =
                     new RectFloats(
-                            detection_boxes[4 * i + 1] * inputSize,
-                            detection_boxes[4 * i] * inputSize,
-                            detection_boxes[4 * i + 3] * inputSize,
-                            detection_boxes[4 * i + 2] * inputSize);
+                            detection_boxes[4 * i + 1] * width,
+                            detection_boxes[4 * i] * height,
+                            detection_boxes[4 * i + 3] * width,
+                            detection_boxes[4 * i + 2] * height);
             priorityQueue.add(
                     new Recognition("" + i, labels.get(((int) detection_classes[i]) - 1), detection_scores[i], rectDetection));
         }
@@ -195,6 +217,8 @@ public class CustomObjectDetector {
         }
 
         String s = "hoho";
+
+        return recognitions;
     }
 
 //    private String[] fetchNames() {
