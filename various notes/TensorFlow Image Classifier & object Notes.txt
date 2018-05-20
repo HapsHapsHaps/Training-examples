@@ -1,0 +1,104 @@
+TensorFlow Image Classifier Links..
+
+Mest potentiale - "5 min" (2016)
+Youtube: https://www.youtube.com/watch?v=QfNvhPx5Px8
+Github : https://github.com/llSourcell/tensorflow_image_classifier
+
+Alternativ knap så vel forklarende - "3 min" (2018)
+YouTube: https://www.youtube.com/watch?v=qbFF1r4NGmA
+Blog   : https://askmacgyver.com/blog/tutorial/create-image-classifier
+Github : https://github.com/MacgyverCode/Image-Classification-Example
+
+# Flowers
+
+# Under: /tensorflow/tensorflow/examples/image_retraining
+python retrain.py --image_dir ~/sharedfolder/flower/flower_photos
+
+python /tensorflow/tensorflow/examples/image_retraining/retrain.py --image_dir ~/sharedfolder/flower/flower_photos
+
+# Under: /tensorflow/tensorflow/examples/label_image
+python label_image.py --graph=/tmp/output_graph.pb --labels=/tmp/output_labels.txt --input_layer=Mul --output_layer=final_result --image="$HOME/sharedfolder/flower/flower_photos/daisy/21652746_cc379e0eea_m.jpg"
+
+python /tensorflow/tensorflow/examples/label_image/label_image.py --graph=$HOME/sharedfolder/flower/output_graph.pb --labels=$HOME/sharedfolder/flower/output_labels.txt --input_layer=Mul --output_layer=final_result --image="$HOME/sharedfolder/flower/flower_photos/daisy/21652746_cc379e0eea_m.jpg"
+
+
+# Subs
+Gør billeder mindre kræver Imagemagick
+sudo dnf install ImageMagick
+
+## Lav mindre
+for file in *.jpg; do convert $file -resize 400 -quality 90 result/$file; done
+convert $file -resize 200 -quality 75 $file-small
+
+## konverter png til jpg:
+mogrify -format jpg *.png && rm -f *.png
+
+python /tensorflow/tensorflow/examples/image_retraining/retrain.py --image_dir ~/sharedfolder/subs/sub_photos
+
+python /tensorflow/tensorflow/examples/label_image/label_image.py --graph=$HOME/sharedfolder/subs/trained-files/output_graph.pb --labels=$HOME/sharedfolder/subs/trained-files/output_labels.txt --input_layer=Mul --output_layer=final_result --image="$HOME/sharedfolder/subs/sub_photos/sub"
+
+----------------------------------------------------------------------
+TensorFlow Object detection Links..
+
+Meget detaljeret - Object & Classifier Windows 10 GPU (Tensorflow 1.5) (2018)
+Youtube: https://www.youtube.com/watch?v=Rgpfk6eYxJA
+
+https://github.com/matterport/Mask_RCNN/issues/6#issuecomment-341623963
+
+https://becominghuman.ai/tensorflow-object-detection-api-tutorial-training-and-evaluating-custom-object-detector-ed2594afcf73
+
+Steps:
+	- Get images
+	- Label Images
+	- Convert image label xml files to a single csv file
+	- Create TFRecord from csv
+	- Train model
+	- Use model
+
+# Get images
+
+# Label Images
+
+# Convert image label xml files to a single csv file:
+Make sure all images and their labelled xml files is copied into a folder of the name "images".
+
+Then from within docker container, cd to parent directory of where images folder reside, and with the following file in this folder, execute it. so execute: 
+
+python xml_to_csv.py
+
+That should create a file called "labels.csv" inside the data directory.
+
+# Create TFRecord from csv
+With the "labels.csv" inside the data directory, it can now be converted to the proper TFRecord format that the training uses. 
+For this there's the scrip "generate_tfrecord.py", which just like the xml to csv script should reside within the working directory. 
+So just execute the following command: 
+
+python generate_tfrecord.py --csv_input=data/labels.csv  --output_path=data/train.record
+
+Which wil create the resulting TFRecord "train.record" file, which is what we needed to begin the actual training.
+
+# Train model
+From within container, copy images and data directories ...
+
+python train.py --logtostderr --pipeline_config_path=data/ssd_mobilenet_v1_coco.config --train_dir=training/
+
+#TO visualize the training results
+tensorboard --logdir=training/
+
+# Teste training
+python eval.py --logtostderr --pipeline_config_path=data/ssd_mobilenet_v1_coco.config --checkpoint_dir=training/ --eval_dir=eval/
+
+python eval.py --logtostderr --pipeline_config_path=data/ssd_mobilenet_v1_coco.config --checkpoint_dir=/root/sharedfolder/containerOutput/training/ --eval_dir=eval/
+
+#To visualize the eval results
+tensorboard --logdir=eval/
+
+# Export trained result model, so It can be used.
+python export_inference_graph.py \
+    --input_type image_tensor \
+    --pipeline_config_path=data/ssd_mobilenet_v1_coco.config \
+    --trained_checkpoint_prefix=training/model.ckpt-12527 \
+    --output_directory training/output_inference_graph_custom.pb
+
+jupyter notebook --allow-root
+

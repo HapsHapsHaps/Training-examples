@@ -1,0 +1,14 @@
+
+Szaza example
+Primær:  https://github.com/szaza/tensorflow-example-java
+Website: https://sites.google.com/view/tensorflow-example-java-api/home
+
+Stack overflow Example:
+https://stackoverflow.com/questions/47077983/yolo-detector-in-java
+
+
+Raccoon detector
+https://towardsdatascience.com/how-to-train-your-own-object-detector-with-tensorflows-object-detector-api-bec72ecfe1d9
+https://github.com/datitran/raccoon_dataset
+
+

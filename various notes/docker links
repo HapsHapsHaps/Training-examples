@@ -1,0 +1,6 @@
+docker run --rm -it -p 8000:8888 -p 6005:6006 -v /home/jacob/andet/training/docker-training-shared:/root/sharedfolder:Z tensorflow/tensorflow:latest-devel
+
+nvidia-docker run --rm -it -p 8001:8888 -p 6006:6006 -v /home/jacob/andet/training/docker-training-shared:/root/sharedfolder:Z tensorflow/tensorflow:latest-devel-gpu
+
+docker exec -it 27f12c2af819 bash
+

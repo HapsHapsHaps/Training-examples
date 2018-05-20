@@ -1,0 +1,32 @@
+
+
+This is for making gpu accelerated learning possbile with Fedora Linux.
+
+Change to correct docker install: (the fedora repo one is ancient)
+https://docs.docker.com/install/linux/docker-ce/fedora/
+
+
+Install nvidia-docker:
+For the link below, go to the section with CentOS 7, RHEL and so on.. 
+Add repository, and run: 
+dnf install nvidia-docker
+
+Nothing more!
+
+https://github.com/NVIDIA/nvidia-docker
+
+
+Fedora install nvidia driver og cuda libs mm:
+https://negativo17.org/nvidia-driver/
+
+Specifically install this driver: nvidia-driver-cuda
+
+Reboot, and then test if it works with the following command:
+nvidia-docker run --rm nvidia/cuda nvidia-smi
+
+
+Nvidia card status:
+nvidia-smi
+
+
+
