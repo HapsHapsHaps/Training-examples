@@ -25,36 +25,66 @@ public class CustomObjectDetector {
     private byte[] graphBytes;
     private List<String> labels;
 
+    /**
+     * Find object classification in images with a pre-trained graph model, and a pbtxt label file
+     * @param graphFile The graph model file to load the pre-trained graph from.
+     * @param labelFile The .pbtxt model label file, with the possible object labels.
+     * @throws IOException if an I/O error occurs.
+     */
     public CustomObjectDetector(File graphFile, File labelFile) throws IOException {
-        addGraph(graphFile);
-        addLabels(labelFile);
+        InputStream graphInputStream = Files.newInputStream(graphFile.toPath());
+        this.graphBytes = loadGraph(graphInputStream);
+        this.labels = loadLabels(labelFile);
     }
 
-    private void addGraph(File graphFile) throws IOException {
+    /**
+     * Find object classification in images with a pre-trained graph model, and a ordered list of the possible labels.
+     * @param graphFile The graph model stream to load the pre-trained graph from.
+     * @param labels an ordered list of with the possible object labels that can be detected.
+     * @throws IOException if an I/O error occurs.
+     */
+    public CustomObjectDetector(InputStream graphFile, List<String> labels) throws IOException {
+        this.graphBytes = loadGraph(graphFile);
+        this.labels = labels;
+    }
 
-        InputStream inputStream = Files.newInputStream(graphFile.toPath());
+    /**
+     * Loads the graph from the pre-trained model file.
+     * @param graphFile the trained graph/model file data to load from.
+     * @return The graph model data.
+     * @throws IOException if an I/O error occurs.
+     */
+    private byte[] loadGraph(InputStream graphFile) throws IOException {
 
-        int baosInitSize = inputStream.available() > 16384 ? inputStream.available() : 16384;
+        int baosInitSize = graphFile.available() > 16384 ? graphFile.available() : 16384;
         ByteArrayOutputStream baos = new ByteArrayOutputStream(baosInitSize);
         int numBytesRead;
         byte[] buf = new byte[16384];
-        while ((numBytesRead = inputStream.read(buf, 0, buf.length)) != -1) {
+        while ((numBytesRead = graphFile.read(buf, 0, buf.length)) != -1) {
             baos.write(buf, 0, numBytesRead);
         }
-        this.graphBytes = baos.toByteArray();
+
+        return baos.toByteArray();
     }
 
-    private void addLabels(File labelFile) throws IOException {
-        this.labels = new ArrayList(2);
-        List<String> labels = Files.readAllLines(labelFile.toPath());
+    /**
+     * Read label names from label file.
+     * @param labelFile the label file to read
+     * @throws IOException
+     */
+    private List<String> loadLabels(File labelFile) throws IOException {
+        List<String> labels = new ArrayList<>(2);
+        List<String> fileLines = Files.readAllLines(labelFile.toPath());
 
-        for (String label : labels) {
-            if(label.contains("name:")) {
-                int i = label.indexOf("'");
-                String substring = label.substring(i + 1, label.length() - 1);
-                this.labels.add(substring);
+        for (String line : fileLines) {
+            if(line.contains("name:")) {
+                int i = line.indexOf("'");
+                String substring = line.substring(i + 1, line.length() - 1);
+                labels.add(substring);
             }
         }
+
+        return labels;
     }
 
     public ArrayList<Recognition> classifyImage(BufferedImage image) {
@@ -68,9 +98,11 @@ public class CustomObjectDetector {
 
         Detection detection = executeGraph(imageTensor);
 
-        return processDetections(detection, width, height);
-//        test(detection);
-//        return null;
+        ArrayList<Recognition> recognitions = processDetections(detection, width, height);
+
+        imageTensor.close();
+
+        return recognitions;
     }
 
     public Tensor<UInt8> normalizeImage_UInt8(BufferedImage image, int width, int height) {
@@ -85,20 +117,17 @@ public class CustomObjectDetector {
 //            byteValues[i * 3 + 0] = (byte) ((imageInts[i] >> 16) & 0xFF);
 //        }
 
-        if (image.getType() != BufferedImage.TYPE_3BYTE_BGR) {
-            throw new RuntimeException("Expected 3-byte BGR encoding in BufferedImage, found " + image.getType() + ". This code could be made more robust");
-        }
+//        if (image.getType() != BufferedImage.TYPE_3BYTE_BGR) {
+//            throw new RuntimeException("Expected 3-byte BGR encoding in BufferedImage, found " + image.getType());
+//        }
 
         byte[] data = ((DataBufferByte) image.getData().getDataBuffer()).getData();
         bgr2rgb(data);
 
-//        inputName, byteValues, 1, inputSize, inputSize, 3
-//        long[] dims = new long[] {1, width, height, 3};
         final long BATCH_SIZE = 1;
         final long CHANNELS = 3;
         long[] shape = new long[] {BATCH_SIZE, image.getHeight(), image.getWidth(), CHANNELS};
         return Tensor.create(UInt8.class, shape, ByteBuffer.wrap(data));
-//        return Tensor.create(UInt8.class, dims, ByteBuffer.wrap(byteValues));
     }
 
     /**
@@ -149,7 +178,7 @@ public class CustomObjectDetector {
     private ArrayList<Recognition> processDetections(Detection detection, int width, int height) {
         // Find the best detections.
         final PriorityQueue<Recognition> priorityQueue =
-                new PriorityQueue<Recognition>(1, new RecognitionComparetor());
+                new PriorityQueue<Recognition>(1, new RecognitionComparator());
 
         float[] detection_boxes = detection.getDetection_boxes();
         float[] detection_scores = detection.getDetection_scores();
@@ -164,7 +193,7 @@ public class CustomObjectDetector {
                             detection_boxes[4 * i + 3] * width,
                             detection_boxes[4 * i + 2] * height);
             priorityQueue.add(
-                    new Recognition("" + i, labels.get(((int) detection_classes[i]) - 1), detection_scores[i], rectDetection));
+                    new Recognition("" + i, labels.get(( (int) detection_classes[i] ) - 1), detection_scores[i], rectDetection));
         }
 
         final ArrayList<Recognition> recognitions = new ArrayList<>();
@@ -178,11 +207,10 @@ public class CustomObjectDetector {
     /**
      * Used to make sure the detections with highest confidence, is placed highest in queue.
      */
-    class RecognitionComparetor implements Comparator<org.tensorflow.demo.Recognition> {
+    class RecognitionComparator implements Comparator<org.tensorflow.demo.Recognition> {
         @Override
-        public int compare(final org.tensorflow.demo.Recognition recognition1, final org.tensorflow.demo.Recognition recognition2) {
-            // Intentionally reversed to put high confidence at the head of the queue.
-            return Float.compare(recognition2.getConfidence(), recognition1.getConfidence());
+        public int compare(final org.tensorflow.demo.Recognition recognitionA, final org.tensorflow.demo.Recognition recognitionB) {
+            return Float.compare(recognitionB.getConfidence(), recognitionA.getConfidence());
         }
     }
 }

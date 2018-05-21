@@ -1,5 +1,3 @@
-import org.apache.commons.io.FileUtils;
-import org.tensorflow.demo.Classifier;
 import org.tensorflow.demo.Recognition;
 import org.tensorflow.demo.RectFloats;
 import org.tensorflow.demo.custom.CustomObjectDetector;
@@ -32,7 +30,6 @@ public class Main {
         BufferedImage image = ImageIO.read(imageFile);
 
         CustomObjectDetector objectDetector = new CustomObjectDetector(modelFile, labelFile);
-//        objectDetector.addGraph(modelFile);
 
         ArrayList<Recognition> recognitions = objectDetector.classifyImage(image);
 

@@ -22,6 +22,7 @@ public class CustomClassifier implements AutoCloseable {
     private List<Tensor<?>> inputTensors = new ArrayList<>(1);
     private List<String> operationNames = new ArrayList<>(resultOperationNames.length);
 
+    // All variables that data from a Tensor pumps its data into, must be pre-allocated.
     private float[] num_detections = new float[NUM_DETECTIONS];
     private float[] detection_boxes = new float[MAX_RESULTS * 4];
     private float[] detection_scores = new float[MAX_RESULTS];
