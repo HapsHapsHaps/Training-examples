@@ -1,4 +1,4 @@
-package org.tensorflow.demo;
+package dk.hapshapshaps.classifier.objectdetection.models;
 
 public class RectFloats {
     private final float x, y, width, height;

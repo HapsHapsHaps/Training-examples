@@ -1,6 +1,6 @@
-import org.tensorflow.demo.Recognition;
-import org.tensorflow.demo.RectFloats;
-import org.tensorflow.demo.custom.CustomObjectDetector;
+import dk.hapshapshaps.classifier.objectdetection.models.Recognition;
+import dk.hapshapshaps.classifier.objectdetection.models.RectFloats;
+import dk.hapshapshaps.classifier.objectdetection.CustomObjectDetector;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

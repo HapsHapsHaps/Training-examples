@@ -1,8 +1,9 @@
-package org.tensorflow.demo.custom;
+package dk.hapshapshaps.classifier.objectdetection;
 
 import org.tensorflow.*;
-import org.tensorflow.demo.Recognition;
-import org.tensorflow.demo.RectFloats;
+import dk.hapshapshaps.classifier.objectdetection.models.Recognition;
+import dk.hapshapshaps.classifier.objectdetection.models.RectFloats;
+import dk.hapshapshaps.classifier.objectdetection.models.Detection;
 import org.tensorflow.types.UInt8;
 
 import java.awt.image.BufferedImage;
@@ -207,9 +208,9 @@ public class CustomObjectDetector {
     /**
      * Used to make sure the detections with highest confidence, is placed highest in queue.
      */
-    class RecognitionComparator implements Comparator<org.tensorflow.demo.Recognition> {
+    class RecognitionComparator implements Comparator<Recognition> {
         @Override
-        public int compare(final org.tensorflow.demo.Recognition recognitionA, final org.tensorflow.demo.Recognition recognitionB) {
+        public int compare(final Recognition recognitionA, final Recognition recognitionB) {
             return Float.compare(recognitionB.getConfidence(), recognitionA.getConfidence());
         }
     }

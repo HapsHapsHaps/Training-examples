@@ -1,4 +1,4 @@
-package org.tensorflow.demo.custom;
+package dk.hapshapshaps.classifier.objectdetection.models;
 
 public class Detection {
 
@@ -7,7 +7,7 @@ public class Detection {
     private float[] detection_scores;
     private float[] detection_classes;
 
-    Detection(float[] num_detections, float[] detection_boxes, float[] detection_scores, float[] detection_classes) {
+    public Detection(float[] num_detections, float[] detection_boxes, float[] detection_scores, float[] detection_classes) {
         this.num_detections = num_detections;
         this.detection_boxes = detection_boxes;
         this.detection_scores = detection_scores;

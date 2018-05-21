@@ -1,4 +1,4 @@
-package org.tensorflow.demo;
+package dk.hapshapshaps.classifier.objectdetection.models;
 
 /**
  * An immutable result returned by a Classifier describing what was recognized.
