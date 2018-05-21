@@ -5,7 +5,6 @@ import org.tensorflow.demo.Recognition;
 import org.tensorflow.demo.RectFloats;
 import org.tensorflow.types.UInt8;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.ByteArrayOutputStream;
@@ -21,7 +20,7 @@ import java.util.PriorityQueue;
 
 public class CustomObjectDetector {
     private static final String INPUT_NAME = "image_tensor";
-    private static final int MAX_RESULTS = 24;
+    private static final int MAX_RESULTS = 10;
 
     private byte[] graphBytes;
     private List<String> labels;
@@ -32,7 +31,6 @@ public class CustomObjectDetector {
     }
 
     private void addGraph(File graphFile) throws IOException {
-//        this.graphBytes = FileUtils.readFileToByteArray(graphFile);
 
         InputStream inputStream = Files.newInputStream(graphFile.toPath());
 
@@ -59,7 +57,7 @@ public class CustomObjectDetector {
         }
     }
 
-    public ArrayList<Recognition> classifyImage(BufferedImage image, int inputSize) {
+    public ArrayList<Recognition> classifyImage(BufferedImage image) {
 
         int width = image.getWidth();
         int height = image.getHeight();
@@ -69,11 +67,11 @@ public class CustomObjectDetector {
 
 
 //        Tensor<Float> imageTensor = normalizeImage(imageStream.toByteArray());
-        Tensor<UInt8> imageTensor = normalizeImage_UInt8(image, inputSize, width, height);
+        Tensor<UInt8> imageTensor = normalizeImage_UInt8(image, width, height);
 
         Detection detection = executeGraph(imageTensor);
 
-        return processDetections(detection, inputSize, width, height);
+        return processDetections(detection, width, height);
 //        test(detection);
 //        return null;
     }
@@ -105,7 +103,7 @@ public class CustomObjectDetector {
 //        }
 //    }
 
-    public Tensor<UInt8> normalizeImage_UInt8(BufferedImage image, int inputSize, int width, int height) {
+    public Tensor<UInt8> normalizeImage_UInt8(BufferedImage image, int width, int height) {
         int[] imageInts = new int[width * height];
         byte[] byteValues = new byte[width * height * 3];
 
@@ -134,7 +132,7 @@ public class CustomObjectDetector {
     }
 
     /**
-     * Converts image from the type BGR to RGB
+     * Converts image pixels from the type BGR to RGB
      * @param data
      */
     private static void bgr2rgb(byte[] data) {
@@ -167,9 +165,6 @@ public class CustomObjectDetector {
 
 //                System.out.println(num_detections);
 
-                String s = "";
-
-//                return detection;
                 return classifier.detections();
             }
         }
@@ -181,23 +176,10 @@ public class CustomObjectDetector {
         return graph;
     }
 
-    private ArrayList<Recognition> processDetections(Detection detection, int inputSize, int width, int height) {
+    private ArrayList<Recognition> processDetections(Detection detection, int width, int height) {
         // Find the best detections.
         final PriorityQueue<Recognition> priorityQueue =
-                new PriorityQueue<Recognition>(
-                        1,
-                        new Comparator<Recognition>() {
-                            @Override
-                            public int compare(final Recognition recognition1, final Recognition recognition2) {
-                                // Intentionally reversed to put high confidence at the head of the queue.
-                                return Float.compare(recognition2.getConfidence(), recognition1.getConfidence());
-                            }
-                        });
-
-//        outputLocations); //detection_boxes
-//        outputScores); //detection_scores
-//        outputClasses); //detection_classes
-//        outputNumDetections); //num_detections
+                new PriorityQueue<Recognition>(1, new RecognitionComparetor());
 
         float[] detection_boxes = detection.getDetection_boxes();
         float[] detection_scores = detection.getDetection_scores();
@@ -220,37 +202,17 @@ public class CustomObjectDetector {
             recognitions.add(priorityQueue.poll());
         }
 
-        String s = "hoho";
-
         return recognitions;
-//        return null;
     }
 
-    private void test(Detection detection) {
-//        float[][] detection_boxes = detection.getDetection_boxes();
-//        float[] detection_scores = detection.getDetection_scores();
-//        float[] detection_classes = detection.getDetection_classes();
-//
-//        // All these tensors have:
-//        // - 1 as the first dimension
-//        // - maxObjects as the second dimension
-//        // While boxesT will have 4 as the third dimension (2 sets of (x, y) coordinates).
-//        // This can be verified by looking at scoresT.shape() etc.
-//        // Print all objects whose score is at least 0.5.
-//        boolean foundSomething = false;
-//        for (int i = 0; i < detection_scores.length; ++i) {
-//            if (detection_scores[i] < 0.5) {
-//                continue;
-//            }
-//            foundSomething = true;
-//            System.out.printf("\tFound %-20s (score: %.4f)\n", labels.get((int)detection_classes[i]), detection_scores[i]);
-//        }
-//        if (!foundSomething) {
-//            System.out.println("No objects detected with a high enough score.");
-//        }
+    /**
+     * Used to make sure the detections with highest confidence, is placed highest in queue.
+     */
+    class RecognitionComparetor implements Comparator<org.tensorflow.demo.Recognition> {
+        @Override
+        public int compare(final org.tensorflow.demo.Recognition recognition1, final org.tensorflow.demo.Recognition recognition2) {
+            // Intentionally reversed to put high confidence at the head of the queue.
+            return Float.compare(recognition2.getConfidence(), recognition1.getConfidence());
+        }
     }
-
-//    private String[] fetchNames() {
-//
-//    }
 }

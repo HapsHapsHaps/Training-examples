@@ -18,7 +18,7 @@ public class CustomClassifier implements AutoCloseable {
 
     private Session session;
     private Session.Runner runner;
-    private List<Tensor<?>> outputTensors = new ArrayList<>(5);
+    private List<Tensor<?>> outputTensors = new ArrayList<>(4);
     private List<Tensor<?>> inputTensors = new ArrayList<>(1);
     private List<String> operationNames = new ArrayList<>(resultOperationNames.length);
 
