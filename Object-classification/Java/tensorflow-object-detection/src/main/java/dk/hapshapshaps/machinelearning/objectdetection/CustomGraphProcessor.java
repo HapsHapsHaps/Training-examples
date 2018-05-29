@@ -1,9 +1,9 @@
-package dk.hapshapshaps.classifier.objectdetection;
+package dk.hapshapshaps.machinelearning.objectdetection;
 
 import org.tensorflow.Graph;
 import org.tensorflow.Session;
 import org.tensorflow.Tensor;
-import dk.hapshapshaps.classifier.objectdetection.models.Detection;
+import dk.hapshapshaps.machinelearning.objectdetection.models.Detection;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;

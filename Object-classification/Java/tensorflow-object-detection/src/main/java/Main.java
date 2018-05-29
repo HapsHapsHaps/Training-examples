@@ -1,7 +1,7 @@
-import dk.hapshapshaps.classifier.objectdetection.CustomObjectDetector;
-import dk.hapshapshaps.classifier.objectdetection.ObjectDetector;
-import dk.hapshapshaps.classifier.objectdetection.models.Recognition;
-import dk.hapshapshaps.classifier.objectdetection.models.RectFloats;
+import dk.hapshapshaps.machinelearning.objectdetection.CustomObjectDetector;
+import dk.hapshapshaps.machinelearning.objectdetection.ObjectDetector;
+import dk.hapshapshaps.machinelearning.objectdetection.models.Recognition;
+import dk.hapshapshaps.machinelearning.objectdetection.models.RectFloats;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

@@ -1,9 +1,9 @@
-package dk.hapshapshaps.classifier.objectdetection;
+package dk.hapshapshaps.machinelearning.objectdetection;
 
 import org.tensorflow.*;
-import dk.hapshapshaps.classifier.objectdetection.models.Recognition;
-import dk.hapshapshaps.classifier.objectdetection.models.RectFloats;
-import dk.hapshapshaps.classifier.objectdetection.models.Detection;
+import dk.hapshapshaps.machinelearning.objectdetection.models.Recognition;
+import dk.hapshapshaps.machinelearning.objectdetection.models.RectFloats;
+import dk.hapshapshaps.machinelearning.objectdetection.models.Detection;
 import org.tensorflow.types.UInt8;
 
 import java.awt.image.BufferedImage;

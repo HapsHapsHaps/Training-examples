@@ -1,4 +1,4 @@
-package dk.hapshapshaps.classifier.objectdetection.models;
+package dk.hapshapshaps.machinelearning.objectdetection.models;
 
 /**
  * An immutable result returned by a Classifier describing what was recognized.

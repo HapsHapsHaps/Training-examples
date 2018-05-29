@@ -1,6 +1,6 @@
-package dk.hapshapshaps.classifier.objectdetection;
+package dk.hapshapshaps.machinelearning.objectdetection;
 
-import dk.hapshapshaps.classifier.objectdetection.models.Recognition;
+import dk.hapshapshaps.machinelearning.objectdetection.models.Recognition;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
