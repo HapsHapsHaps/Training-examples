@@ -1,6 +1,6 @@
 import dk.hapshapshaps.machinelearning.objectdetection.CustomObjectDetector;
 import dk.hapshapshaps.machinelearning.objectdetection.ObjectDetector;
-import dk.hapshapshaps.machinelearning.objectdetection.models.Recognition;
+import dk.hapshapshaps.machinelearning.objectdetection.models.ObjectRecognition;
 import dk.hapshapshaps.machinelearning.objectdetection.models.RectFloats;
 
 import javax.imageio.ImageIO;
@@ -35,12 +35,12 @@ public class Main {
 
         ObjectDetector objectDetector = new CustomObjectDetector(modelFile, labelFile);
 
-        ArrayList<Recognition> recognitions = objectDetector.classifyImage(image);
+        ArrayList<ObjectRecognition> objectRecognitions = objectDetector.classifyImage(image);
 
         List<Box> boxes = new ArrayList<>();
-        for (Recognition recognition : recognitions) {
-            if(recognition.getConfidence() > 0.05f) {
-                RectFloats location = recognition.getLocation();
+        for (ObjectRecognition objectRecognition : objectRecognitions) {
+            if(objectRecognition.getConfidence() > 0.05f) {
+                RectFloats location = objectRecognition.getLocation();
                 int x = (int) location.getX();
                 int y = (int) location.getY();
                 int width = (int) location.getWidth() - x;

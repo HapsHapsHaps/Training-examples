@@ -1,7 +1,7 @@
 package dk.hapshapshaps.machinelearning.objectdetection;
 
 import org.tensorflow.*;
-import dk.hapshapshaps.machinelearning.objectdetection.models.Recognition;
+import dk.hapshapshaps.machinelearning.objectdetection.models.ObjectRecognition;
 import dk.hapshapshaps.machinelearning.objectdetection.models.RectFloats;
 import dk.hapshapshaps.machinelearning.objectdetection.models.Detection;
 import org.tensorflow.types.UInt8;
@@ -95,7 +95,7 @@ public class CustomObjectDetector implements ObjectDetector {
     }
 
     @Override
-    public ArrayList<Recognition> classifyImage(BufferedImage image) {
+    public ArrayList<ObjectRecognition> classifyImage(BufferedImage image) {
 
         int width = image.getWidth();
         int height = image.getHeight();
@@ -106,11 +106,11 @@ public class CustomObjectDetector implements ObjectDetector {
 
         Detection detection = executeGraph(imageTensor);
 
-        ArrayList<Recognition> recognitions = processDetections(detection, width, height);
+        ArrayList<ObjectRecognition> objectRecognitions = processDetections(detection, width, height);
 
         imageTensor.close();
 
-        return recognitions;
+        return objectRecognitions;
     }
 
     public Tensor<UInt8> normalizeImage_UInt8(BufferedImage image, int width, int height) {
@@ -166,7 +166,7 @@ public class CustomObjectDetector implements ObjectDetector {
 //            float[] detection_scores = classifier.get_detection_scores();
 //            float[] detection_classes = classifier.get_detection_classes();
 //
-//            Detection detection = new Detection(num_detections, detection_boxes, detection_scores, detection_classes);
+//            ClassifyRecognition detection = new ClassifyRecognition(num_detections, detection_boxes, detection_scores, detection_classes);
 //
 //            System.out.println(num_detections);
 
@@ -180,10 +180,10 @@ public class CustomObjectDetector implements ObjectDetector {
         return graph;
     }
 
-    private ArrayList<Recognition> processDetections(Detection detection, int width, int height) {
+    private ArrayList<ObjectRecognition> processDetections(Detection detection, int width, int height) {
         // Find the best detections.
-        final PriorityQueue<Recognition> priorityQueue =
-                new PriorityQueue<Recognition>(1, new RecognitionComparator());
+        final PriorityQueue<ObjectRecognition> priorityQueue =
+                new PriorityQueue<ObjectRecognition>(1, new RecognitionComparator());
 
         float[] detection_boxes = detection.getDetection_boxes();
         float[] detection_scores = detection.getDetection_scores();
@@ -198,15 +198,15 @@ public class CustomObjectDetector implements ObjectDetector {
                             detection_boxes[4 * i + 3] * width,
                             detection_boxes[4 * i + 2] * height);
             priorityQueue.add(
-                    new Recognition("" + i, labels.get(( (int) detection_classes[i] ) - 1), detection_scores[i], rectDetection));
+                    new ObjectRecognition("" + i, labels.get(( (int) detection_classes[i] ) - 1), detection_scores[i], rectDetection));
         }
 
-        final ArrayList<Recognition> recognitions = new ArrayList<>();
+        final ArrayList<ObjectRecognition> objectRecognitions = new ArrayList<>();
         for (int i = 0; i < Math.min(priorityQueue.size(), MAX_RESULTS); ++i) {
-            recognitions.add(priorityQueue.poll());
+            objectRecognitions.add(priorityQueue.poll());
         }
 
-        return recognitions;
+        return objectRecognitions;
     }
 
     @Override
@@ -217,10 +217,10 @@ public class CustomObjectDetector implements ObjectDetector {
     /**
      * Used to make sure the detections with highest confidence, is placed highest in queue.
      */
-    class RecognitionComparator implements Comparator<Recognition> {
+    class RecognitionComparator implements Comparator<ObjectRecognition> {
         @Override
-        public int compare(final Recognition recognitionA, final Recognition recognitionB) {
-            return Float.compare(recognitionB.getConfidence(), recognitionA.getConfidence());
+        public int compare(final ObjectRecognition objectRecognitionA, final ObjectRecognition objectRecognitionB) {
+            return Float.compare(objectRecognitionB.getConfidence(), objectRecognitionA.getConfidence());
         }
     }
 }
