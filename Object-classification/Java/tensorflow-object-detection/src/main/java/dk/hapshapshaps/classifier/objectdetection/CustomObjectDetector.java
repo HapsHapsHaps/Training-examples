@@ -19,7 +19,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 
-public class CustomObjectDetector {
+public class CustomObjectDetector implements ObjectDetector {
     private static final String INPUT_NAME = "image_tensor";
     private static final int MAX_RESULTS = 10;
 
@@ -88,6 +88,7 @@ public class CustomObjectDetector {
         return labels;
     }
 
+    @Override
     public ArrayList<Recognition> classifyImage(BufferedImage image) {
 
         int width = image.getWidth();
@@ -151,7 +152,7 @@ public class CustomObjectDetector {
     private Detection executeGraph(final Tensor<?> image) {
         try (Graph graph = loadGraph()) {
 
-            try(CustomClassifier classifier = new CustomClassifier(graph)) {
+            try(CustomGraphProcessor classifier = new CustomGraphProcessor(graph)) {
                 classifier.feed(INPUT_NAME, image);
                 classifier.run();
 

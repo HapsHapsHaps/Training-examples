@@ -9,7 +9,7 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomClassifier implements AutoCloseable {
+public class CustomGraphProcessor implements AutoCloseable {
 
     String[] resultOperationNames = new String[] {"num_detections", "detection_boxes", "detection_scores",
             "detection_classes"/*, "detection_masks"*/};
@@ -30,7 +30,7 @@ public class CustomClassifier implements AutoCloseable {
     private float[] detection_classes = new float[MAX_RESULTS];
     private float[] detection_masks = new float[MAX_RESULTS];
 
-    public CustomClassifier(Graph graph) {
+    public CustomGraphProcessor(Graph graph) {
         this.session = new Session(graph);
         this.runner = session.runner();
     }

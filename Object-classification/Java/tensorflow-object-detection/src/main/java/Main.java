@@ -1,6 +1,7 @@
+import dk.hapshapshaps.classifier.objectdetection.CustomObjectDetector;
+import dk.hapshapshaps.classifier.objectdetection.ObjectDetector;
 import dk.hapshapshaps.classifier.objectdetection.models.Recognition;
 import dk.hapshapshaps.classifier.objectdetection.models.RectFloats;
-import dk.hapshapshaps.classifier.objectdetection.CustomObjectDetector;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -13,23 +14,26 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        File modelFile = new File("/home/jacob/andet/training/docker-training-shared/subTraining/trainingResults/frozen_inference_graph.pb");
-        File labelsFile = new File("/home/jacob/andet/training/docker-training-shared/subTraining/data/object-detection.pbtxt");
-
         File imageFile = new File("/home/jacob/andet/training/docker-training-shared/random-test-images/image-6.jpg");
-
 
         File resultImageFile = new File("/home/jacob/andet/training/docker-training-shared/random-test-images/result.jpg");
 
+//        classification(imageFile, resultImageFile);
 
-        newRun(imageFile, resultImageFile, modelFile, labelsFile);
+        objectDetection(imageFile, resultImageFile);
     }
 
-    private static void newRun(File imageFile, File resultImageFile, File modelFile, File labelFile) throws IOException {
 
         BufferedImage image = ImageIO.read(imageFile);
 
         CustomObjectDetector objectDetector = new CustomObjectDetector(modelFile, labelFile);
+    private static void objectDetection(File imageFile, File resultImageFile) throws IOException {
+        File modelFile = new File("/home/jacob/andet/training/docker-training-shared/subTraining/trainingResults/frozen_inference_graph.pb");
+        File labelFile = new File("/home/jacob/andet/training/docker-training-shared/subTraining/data/object-detection.pbtxt");
+
+        BufferedImage image = ImageIO.read(imageFile);
+
+        ObjectDetector objectDetector = new CustomObjectDetector(modelFile, labelFile);
 
         ArrayList<Recognition> recognitions = objectDetector.classifyImage(image);
 
@@ -74,8 +78,6 @@ public class Main {
         graph.dispose();
         return image;
     }
-
-
 }
 
 class Box {
