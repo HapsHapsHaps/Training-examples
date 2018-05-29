@@ -40,9 +40,9 @@ public class LabelImage {
 //        }
 //        String modelDir = args[0];
 //        String imageFile = args[1];
-        String modelDir = "/home/jacob/andet/training/docker-training-shared/subs/trained-files";
-//        String imageFile = "/home/jacob/andet/training/docker-training-shared/subs/sub_photos/sub/" + "00008.jpg";
-        String imageFile = "/home/jacob/andet/training/docker-training-shared/subs/" + "3241-0_original.jpg";
+        String modelDir = "/home/jacob/andet/training/docker-training-shared/classification/subs/trained-files";
+        String imageFile = "/home/jacob/andet/training/docker-training-shared/classification/subs/" + "3241-0_original.jpg";
+//        String imageFile = "/home/jacob/andet/training/docker-training-shared/classification/subs/" + "nosub-extern.jpg";
 
 
         byte[] graphDef = readAllBytesOrExit(Paths.get(modelDir, "output_graph.pb"));
@@ -52,7 +52,7 @@ public class LabelImage {
 
         try (Tensor<Float> image = constructAndExecuteGraphToNormalizeImage(imageBytes)) {
             float[] labelProbabilities = executeInceptionGraph(graphDef, image);
-            int bestLabelIdx = maxIndex(labelProbabilities);
+            int bestLabelIdx = bestProbabilityIndex(labelProbabilities);
             System.out.println(
                     String.format("BEST MATCH: %s (%.2f%% likely)",
                             labels.get(bestLabelIdx),
@@ -121,7 +121,7 @@ public class LabelImage {
         }
     }
 
-    private static int maxIndex(float[] probabilities) {
+    private static int bestProbabilityIndex(float[] probabilities) {
         int best = 0;
         for (int i = 1; i < probabilities.length; ++i) {
             if (probabilities[i] > probabilities[best]) {
@@ -150,6 +150,4 @@ public class LabelImage {
         }
         return null;
     }
-
-
 }
