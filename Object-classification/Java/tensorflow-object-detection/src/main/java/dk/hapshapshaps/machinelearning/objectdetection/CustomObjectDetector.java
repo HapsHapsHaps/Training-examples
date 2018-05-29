@@ -23,7 +23,8 @@ public class CustomObjectDetector implements ObjectDetector {
     private static final String INPUT_NAME = "image_tensor";
     private static final int MAX_RESULTS = 10;
 
-    private byte[] graphBytes;
+//    private byte[] graphBytes;
+    private Graph graph;
     private List<String> labels;
 
     /**
@@ -34,8 +35,8 @@ public class CustomObjectDetector implements ObjectDetector {
      */
     public CustomObjectDetector(File graphFile, File labelFile) throws IOException {
         InputStream graphInputStream = Files.newInputStream(graphFile.toPath());
-        this.graphBytes = loadGraph(graphInputStream);
-        this.labels = loadLabels(labelFile);
+        List<String> labels = loadLabels(labelFile);
+        setup(graphInputStream, labels);
     }
 
     /**
@@ -45,7 +46,12 @@ public class CustomObjectDetector implements ObjectDetector {
      * @throws IOException if an I/O error occurs.
      */
     public CustomObjectDetector(InputStream graphFile, List<String> labels) throws IOException {
-        this.graphBytes = loadGraph(graphFile);
+        setup(graphFile, labels);
+    }
+
+    private void setup(InputStream graphFile, List<String> labels) throws IOException {
+        byte[] graphBytes = loadGraph(graphFile);
+        this.graph = loadGraph(graphBytes);
         this.labels = labels;
     }
 
@@ -108,8 +114,8 @@ public class CustomObjectDetector implements ObjectDetector {
     }
 
     public Tensor<UInt8> normalizeImage_UInt8(BufferedImage image, int width, int height) {
-        int[] imageInts = new int[width * height];
-        byte[] byteValues = new byte[width * height * 3];
+//        int[] imageInts = new int[width * height];
+//        byte[] byteValues = new byte[width * height * 3];
 
 //        image.getRGB(0,0, image.getWidth(), image.getHeight(), imageInts, 0, image.getWidth());
 
@@ -150,28 +156,25 @@ public class CustomObjectDetector implements ObjectDetector {
      * @return output tensor returned by tensorFlow
      */
     private Detection executeGraph(final Tensor<?> image) {
-        try (Graph graph = loadGraph()) {
 
-            try(CustomGraphProcessor classifier = new CustomGraphProcessor(graph)) {
-                classifier.feed(INPUT_NAME, image);
-                classifier.run();
+        try(CustomGraphProcessor classifier = new CustomGraphProcessor(this.graph)) {
+            classifier.feed(INPUT_NAME, image);
+            classifier.run();
 
+//            float[] num_detections = classifier.get_num_detections();
+//            float[] detection_boxes = classifier.get_detection_boxes();
+//            float[] detection_scores = classifier.get_detection_scores();
+//            float[] detection_classes = classifier.get_detection_classes();
+//
+//            Detection detection = new Detection(num_detections, detection_boxes, detection_scores, detection_classes);
+//
+//            System.out.println(num_detections);
 
-//                float[] num_detections = classifier.get_num_detections();
-//                float[] detection_boxes = classifier.get_detection_boxes();
-//                float[] detection_scores = classifier.get_detection_scores();
-//                float[] detection_classes = classifier.get_detection_classes();
-
-//                Detection detection = new Detection(num_detections, detection_boxes, detection_scores, detection_classes);
-
-//                System.out.println(num_detections);
-
-                return classifier.detections();
-            }
+            return classifier.detections();
         }
     }
 
-    private Graph loadGraph() {
+    private Graph loadGraph(byte[] graphBytes) {
         Graph graph = new Graph();
         graph.importGraphDef(graphBytes);
         return graph;
@@ -204,6 +207,11 @@ public class CustomObjectDetector implements ObjectDetector {
         }
 
         return recognitions;
+    }
+
+    @Override
+    public void close() throws Exception {
+        this.graph.close();
     }
 
     /**
