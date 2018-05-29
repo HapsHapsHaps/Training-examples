@@ -1,3 +1,5 @@
+import dk.hapshapshaps.machinelearning.classifier.CustomClassifier;
+import dk.hapshapshaps.machinelearning.classifier.models.ClassifyRecognition;
 import dk.hapshapshaps.machinelearning.objectdetection.CustomObjectDetector;
 import dk.hapshapshaps.machinelearning.objectdetection.ObjectDetector;
 import dk.hapshapshaps.machinelearning.objectdetection.models.ObjectRecognition;
@@ -23,10 +25,19 @@ public class Main {
         objectDetection(imageFile, resultImageFile);
     }
 
+    private static void classification(File imageFile, File resultImageFile) throws IOException {
+        File modelFile = new File("/home/jacob/andet/training/docker-training-shared/classification/subs/trained-files/output_graph.pb");
+        File labelFile = new File("/home/jacob/andet/training/docker-training-shared/classification/subs/trained-files/output_labels.txt");
 
         BufferedImage image = ImageIO.read(imageFile);
 
-        CustomObjectDetector objectDetector = new CustomObjectDetector(modelFile, labelFile);
+        CustomClassifier classifier = new CustomClassifier(modelFile, labelFile);
+
+        ClassifyRecognition recognition = classifier.classifyImage(image);
+
+        String s = "";
+    }
+
     private static void objectDetection(File imageFile, File resultImageFile) throws IOException {
         File modelFile = new File("/home/jacob/andet/training/docker-training-shared/subTraining/trainingResults/frozen_inference_graph.pb");
         File labelFile = new File("/home/jacob/andet/training/docker-training-shared/subTraining/data/object-detection.pbtxt");
