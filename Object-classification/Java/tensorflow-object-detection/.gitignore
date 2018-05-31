@@ -30,12 +30,7 @@ proguard/
 *.iws
 .idea/
 
-#Gradle
-.gradletasknamecache
-.gradle/
-build/
-bin/
-log/
-out/
+#custom
 src/main/resources/YOLO
 sample/
+*.so

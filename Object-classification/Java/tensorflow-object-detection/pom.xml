@@ -97,7 +97,28 @@
             <groupId>org.tensorflow</groupId>
             <artifactId>tensorflow</artifactId>
             <version>1.8.0</version>
+            <exclusions>
+                <!--<exclusion>-->
+                    <!--<groupId>org.tensorflow</groupId>-->
+                    <!--<artifactId>libtensorflow</artifactId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<groupId>org.tensorflow</groupId>-->
+                    <!--<artifactId>libtensorflow_jni</artifactId>-->
+                <!--</exclusion>-->
+            </exclusions>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.tensorflow</groupId>-->
+            <!--<artifactId>libtensorflow</artifactId>-->
+            <!--<version>1.8.0-custom3</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.tensorflow</groupId>-->
+            <!--<artifactId>libtensorflow_jni</artifactId>-->
+            <!--<version>1.8.0-custom</version>-->
+            <!--<type>so</type>-->
+        <!--</dependency>-->
 
     </dependencies>
 

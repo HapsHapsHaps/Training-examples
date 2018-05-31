@@ -1,5 +1,6 @@
 package dk.hapshapshaps.machinelearning.objectdetection;
 
+import dk.hapshapshaps.machinelearning.DependencyHandler;
 import org.tensorflow.*;
 import dk.hapshapshaps.machinelearning.objectdetection.models.ObjectRecognition;
 import dk.hapshapshaps.machinelearning.objectdetection.models.RectFloats;
@@ -34,6 +35,8 @@ public class CustomObjectDetector implements ObjectDetector {
      * @throws IOException if an I/O error occurs.
      */
     public CustomObjectDetector(File graphFile, File labelFile) throws IOException {
+        DependencyHandler.loadDependencies();
+
         InputStream graphInputStream = Files.newInputStream(graphFile.toPath());
         List<String> labels = loadLabels(labelFile);
         setup(graphInputStream, labels);
