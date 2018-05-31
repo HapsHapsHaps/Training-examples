@@ -2,6 +2,7 @@ import dk.hapshapshaps.machinelearning.classifier.CustomClassifier;
 import dk.hapshapshaps.machinelearning.classifier.models.ClassifyRecognition;
 import dk.hapshapshaps.machinelearning.objectdetection.CustomObjectDetector;
 import dk.hapshapshaps.machinelearning.objectdetection.ObjectDetector;
+import dk.hapshapshaps.machinelearning.objectdetection.models.Box;
 import dk.hapshapshaps.machinelearning.objectdetection.models.ObjectRecognition;
 import dk.hapshapshaps.machinelearning.objectdetection.models.RectFloats;
 
@@ -89,18 +90,7 @@ public class Main {
         graph.dispose();
         return image;
     }
-}
 
-class Box {
-    final int x;
-    final int y;
-    final int width;
-    final int height;
 
-    Box(int x, int y, int width, int height) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
     }
 }
