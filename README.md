@@ -6,6 +6,6 @@ Repository is split into two folders, that focus on each their own areas.
  - Object-Detection
 
 ## Note!
-The Java implementation for Object-Detection with Tensorflow is in following repository:
-[Java Object-Detection](https://github.com/HapsHapsHaps/machinelearning-subs)
+The final Java implementation for Object-Detection and Classification with Tensorflow is in following repository:  
+[Java Object-Detection and Classification](https://github.com/HapsHapsHaps/machinelearning-subs)
 
