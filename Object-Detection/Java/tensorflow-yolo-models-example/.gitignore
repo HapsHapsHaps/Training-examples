@@ -39,3 +39,7 @@ log/
 out/
 src/main/resources/YOLO
 sample/
+
+#Custom
+src/main/resources/tensor/*
+!src/main/resources/tensor/*.md

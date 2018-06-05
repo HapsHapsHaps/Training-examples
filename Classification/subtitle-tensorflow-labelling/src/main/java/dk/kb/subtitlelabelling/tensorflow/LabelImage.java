@@ -41,7 +41,8 @@ public class LabelImage {
 //        String modelDir = args[0];
 //        String imageFile = args[1];
         String modelDir = "/home/jacob/andet/training/docker-training-shared/classification/subs/trained-files";
-        String imageFile = "/home/jacob/andet/training/docker-training-shared/classification/subs/" + "3241-0_original.jpg";
+//        String imageFile = "/home/jacob/andet/training/docker-training-shared/classification/subs/" + "3241-0_original.jpg";
+        String imageFile = "/home/jacob/andet/training/docker-training-shared/random-test-images/" + "image-6.jpg";
 //        String imageFile = "/home/jacob/andet/training/docker-training-shared/classification/subs/" + "nosub-extern.jpg";
 
 
